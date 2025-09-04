@@ -41,14 +41,9 @@ public class SnippetEngine
         }
     }
 
-    public string ExpandText(string input)
+    public string ExpandText(string[] words)
     {
         const string placeholder = "__";
-
-        if (input.Length == 0)
-            return "";
-
-        var words = input.Split([' ', '\n', '\t'], StringSplitOptions.RemoveEmptyEntries);
 
         var func_stack = new Stack<SnippetFuncBuffer>();
 
@@ -77,6 +72,18 @@ public class SnippetEngine
         OutputStrStack(arg_stack, sb, true);
 
         return sb.ToString().Replace(placeholder, "");
+    }
+
+    public static string[] SplitText(string input)
+    {
+        return input.Split([' ', '\n', '\t'], StringSplitOptions.RemoveEmptyEntries);
+    }
+
+    public string ExpandText(string input)
+    {
+        if (input.Length == 0)
+            return "";
+        return ExpandText(SplitText(input));
     }
 
     public void LoadFromLine(string line)

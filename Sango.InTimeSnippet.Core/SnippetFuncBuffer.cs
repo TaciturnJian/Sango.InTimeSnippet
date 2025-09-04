@@ -6,6 +6,22 @@ public record class SnippetFuncBuffer(string Text = "")
 
     public static readonly string ArgPlaceHolder = "@@";
 
+    public int GetArgPlaceCount()
+    {
+        var begin = 0;
+        var count = 0;
+        do
+        {
+            begin = Text.IndexOf(ArgPlaceHolder, begin);
+            if (begin < 0)
+                break;
+            count++;
+            begin += ArgPlaceHolder.Length;
+
+        } while (begin < Text.Length);
+        return count;
+    }
+
     public bool ContainsArgPlace => Text.Contains(ArgPlaceHolder);
 
     public int FirstArgPlace => Text.IndexOf(ArgPlaceHolder);
