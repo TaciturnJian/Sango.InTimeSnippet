@@ -71,7 +71,6 @@ public class SnippetEngine
 
             ApplyArgStack(arg_stack, func);
             func.CleanArgs();
-            OutputStrStack(arg_stack, sb, true);
             arg_stack.Push(func.Text);
         }
 
