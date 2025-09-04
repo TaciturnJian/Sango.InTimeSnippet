@@ -20,8 +20,31 @@ public class SnippetEngine
         return word;
     }
 
+    private static void OutputStrStack(Stack<string> stack, StringBuilder sb, bool reverse = false)
+    {
+        foreach (var str in reverse ? stack.Reverse() : stack)
+        {
+            sb.Insert(0, ' ');
+            sb.Insert(0, str);
+        }
+        stack.Clear();
+    }
+
+    private static void ApplyArgStack(Stack<string> stack, SnippetFuncBuffer func)
+    {
+        while (stack.Count > 0)
+        {
+            var arg = stack.Pop();
+            func.InsertArg(arg);
+            if (!func.ContainsArgPlace)
+                break;
+        }
+    }
+
     public string ExpandText(string input)
     {
+        const string placeholder = "__";
+
         if (input.Length == 0)
             return "";
 
@@ -31,86 +54,39 @@ public class SnippetEngine
 
         var sb = new StringBuilder();
         foreach (var word in words)
-        {
-            var expanded_word = ExpandWord(word);
-            var func_buffer = new SnippetFuncBuffer(expanded_word);
+            func_stack.Push(new(ExpandWord(word)));
 
-            if (func_buffer.ContainsArgPlace)
+        if (func_stack.Count == 0)
+            return "";
+
+        var arg_stack = new Stack<string>();
+        while (func_stack.Count > 0)
+        {
+            var func = func_stack.Pop();
+            if (!func.ContainsArgPlace)
             {
-                func_stack.Push(func_buffer);
+                arg_stack.Push(func.Text);
                 continue;
             }
 
-            var arg_text = func_buffer.Text;
-            while (true)
-            {
-                if (func_stack.Count == 0)
-                {
-                    sb.Append(arg_text);
-                    sb.Append(' ');
-                    break;
-                }
-
-                var buffer = func_stack.Pop();
-                buffer.InsertArg(arg_text);
-                if (buffer.ContainsArgPlace)
-                {
-                    func_stack.Push(buffer);
-                    break;
-                }
-
-                arg_text = buffer.Text;
-            }
+            ApplyArgStack(arg_stack, func);
+            func.CleanArgs();
+            OutputStrStack(arg_stack, sb, true);
+            arg_stack.Push(func.Text);
         }
 
-        if (func_stack.Count > 0)
-        {
-            string? pre_text = null;
-            while (func_stack.Count > 1)
-            {
-                var func = func_stack.Pop();
-                if (!func.ContainsArgPlace)
-                {
-                    if (pre_text is not null)
-                    {
-                        sb.Insert(0, ' ');
-                        sb.Insert(0, pre_text);
-                    }
-                    pre_text = func.Text;
-                    continue;
-                }
+        OutputStrStack(arg_stack, sb, true);
 
-                if (pre_text is null)
-                {
-                    func.CleanArgs();
-                    pre_text = func.Text;
-                    continue;
-                }
-                func.InsertArg(pre_text);
-                func.CleanArgs();
-                pre_text = func.Text;
-            }
-
-            var first_func = func_stack.Pop();
-            if (pre_text is not null)
-            {
-                first_func.InsertArg(pre_text);
-            }
-            first_func.CleanArgs();
-            sb.Insert(0, ' ');
-            sb.Insert(0, first_func.Text);
-        }
-
-        return sb.ToString().Replace("__", "");
+        return sb.ToString().Replace(placeholder, "");
     }
 
     public void LoadFromLine(string line)
     {
-        var comment = '#';
-        var end_sentence = ';';
-        var begin_word = '`';
-        var end_word = '`';
-        var assign = '=';
+        const char comment = '#';
+        const char end_sentence = ';';
+        const char begin_word = '`';
+        const char end_word = '`';
+        const char assign = '=';
         var pattern = @$"{begin_word}(.*?){end_word}\s*{assign}\s*{begin_word}(.*?){end_word}{end_sentence}";
 
         if (line.StartsWith(comment))
