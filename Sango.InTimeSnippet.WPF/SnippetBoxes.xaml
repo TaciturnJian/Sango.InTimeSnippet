@@ -11,7 +11,7 @@
         <DockPanel LastChildFill="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Auto">
             <math:FormulaControl DockPanel.Dock="Top" x:Name="LaTeX" Formula="TextBox" FontSize="24" Scale="32" Margin="0,0,0,32" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto"/>
             <TextBox x:Name="Output" DockPanel.Dock="Top" Text="TextBox" FontSize="24" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" Margin="0,2,0,2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
-            <TextBox x:Name="Input" DockPanel.Dock="Top" Text="TextBox" FontSize="24" TextChanged="Input_TextChanged" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" Margin="0,2,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"/>
+            <TextBox x:Name="Input" DockPanel.Dock="Top" Text="TextBox" FontSize="24" TextChanged="Input_TextChanged" AcceptsReturn="True" AcceptsTab="True" AutoWordSelection="True" Margin="0,2,0,0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" TextWrapping="WrapWithOverflow"/>
         </DockPanel>
 
     </Grid>

@@ -31,6 +31,30 @@ public partial class SnippetBoxes : UserControl
 
     private SnippetEngine _snippetEngine = new();
 
+    public bool LaTeXVisible => LaTeX.Visibility == Visibility.Visible;
+
+    public void HideLaTeX()
+    {
+        LaTeX.Visibility = Visibility.Collapsed;
+    }
+
+    public void ShowLaTeX()
+    {
+        LaTeX.Visibility = Visibility.Visible;
+    }
+
+    public void TurnLaTeX()
+    {
+        if (LaTeXVisible)
+        {
+            HideLaTeX();
+        }
+        else
+        {
+            ShowLaTeX();
+        }
+    }
+
     private void Input_TextChanged(object sender, TextChangedEventArgs e)
     {
         var input = Input.Text;

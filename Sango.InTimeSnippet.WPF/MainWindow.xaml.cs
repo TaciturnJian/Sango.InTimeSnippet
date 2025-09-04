@@ -24,6 +24,11 @@ public partial class MainWindow : Window
         get; private set;
     } = new KeyGesture(Key.L, ModifierKeys.Alt);
 
+    public KeyGesture _turnLaTeXGesture
+    {
+        get; private set;
+    } = new KeyGesture(Key.K, ModifierKeys.Alt);
+
     public MainWindow()
     {
         InitializeComponent();
@@ -47,18 +52,21 @@ public partial class MainWindow : Window
     {
         try
         {
-            HotkeyManager.Current.AddOrReplace("ShowHide", _showHideGesture, OnGlobalHotkeyPressed);
+            HotkeyManager.Current.AddOrReplace("ShowHide", _showHideGesture, (s, e) =>
+            {
+                TurnVisibility();
+                e.Handled = true;
+            });
+            HotkeyManager.Current.AddOrReplace("TurnLaTeX", _turnLaTeXGesture, (s, e) =>
+            {
+                SnippetBox.TurnLaTeX();
+                e.Handled = true;
+            });
         }
         catch (Exception ex)
         {
             MessageBox.Show($"注册热键失败: {ex.Message}");
         }
-    }
-
-    private void OnGlobalHotkeyPressed(object? sender, HotkeyEventArgs e)
-    {
-        TurnVisibility();
-        e.Handled = true;
     }
 
     private void MouseDragMove(MouseButtonEventArgs e)

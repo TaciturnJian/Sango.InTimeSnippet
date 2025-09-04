@@ -2,21 +2,20 @@
 
 namespace Sango.InTimeSnippet.Core;
 
-
 public class SnippetEngine
 {
     public Dictionary<string, string> Snippets { get; set; } = [];
 
     public string ExpandWord(string word)
     {
-        string buffer = "";
-        for (int i = word.Length - 1; i >= 0; i--)
+        string buffer = word;
+        string prefix = "";
+        while (buffer.Length > 0)
         {
-            buffer = word[i] + buffer;
-            if (Snippets.TryGetValue(buffer, out string? expanded))
-            {
-                return string.Concat(word.AsSpan(0, i), expanded);
-            }
+            if (Snippets.TryGetValue(buffer, out var snippet))
+                return prefix + snippet;
+            prefix += buffer[0];
+            buffer = buffer[1..];
         }
         return word;
     }
@@ -43,12 +42,12 @@ public class SnippetEngine
             }
 
             var arg_text = func_buffer.Text;
-
             while (true)
             {
                 if (func_stack.Count == 0)
                 {
                     sb.Append(arg_text);
+                    sb.Append(' ');
                     break;
                 }
 
@@ -74,6 +73,7 @@ public class SnippetEngine
                 {
                     if (pre_text is not null)
                     {
+                        sb.Insert(0, ' ');
                         sb.Insert(0, pre_text);
                     }
                     pre_text = func.Text;
@@ -97,6 +97,7 @@ public class SnippetEngine
                 first_func.InsertArg(pre_text);
             }
             first_func.CleanArgs();
+            sb.Insert(0, ' ');
             sb.Insert(0, first_func.Text);
         }
 

@@ -9,6 +9,6 @@
         WindowStartupLocation="CenterScreen" Topmost="True" WindowStyle="None" MouseDown="Window_MouseDown"
         >
     <Grid MouseDown="Grid_MouseDown">
-        <local:SnippetBoxes Margin="4,4,4,4"/>
+        <local:SnippetBoxes x:Name="SnippetBox" Margin="4,4,4,4"/>
     </Grid>
 </Window>
